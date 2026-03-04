@@ -16,25 +16,17 @@ class ElasticSearch {
     }
 
     public async checkConnection(): Promise<void> {
-        let retries = 5
-        let delay = 2000
-
-        while (retries > 0) {
-            try {
-                const health: ClusterHealthResponse = await this.elasticSearchClient.cluster.health({})
-                log.info(`Gateway elasticsearch service: ${health.status}`)
-                return;
-            } catch (error) {
-                log.error(`Elasticsearch connection failed. Retrying in ${delay / 1000}s`);
-                log.log('error', 'Gateway Elasticsearch checkConnection() method:', error)
-
-                await new Promise((resolve) => setTimeout(resolve, delay));
-
-                retries -= 1;
-                delay *= 2; // exponential backoff
-            }
+        let isConnected = false;
+    while(!isConnected){
+        try {
+            const health: ClusterHealthResponse = await this.elasticSearchClient.cluster.health({});
+            log.info(`Noti elasticsearch service: ${health.status}`)
+            isConnected = true
+        } catch (error) {
+            log.error('Elasticsearch connection failed, retrying');
+            log.log('error','Noti Elasticsearch checkConnection() method:', error)
         }
-        throw new Error('Elasticsearch connection failed after max retries at gateway');
+    }
     }
 }
 
