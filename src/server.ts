@@ -76,7 +76,7 @@ export class GatewayServer{
         app.use((error: IErrorResponse, _req:Request, res:Response, next:NextFunction)=>{
             log.log('error',`Gateway service ${error.comingFrom}: `,error)
             if(error instanceof CustomError){
-                res.status(error.statusCode).json(error.serializeError)
+                res.status(error.statusCode).json(error.serializeError())
             }
             next()
         })
