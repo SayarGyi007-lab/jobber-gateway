@@ -9,8 +9,9 @@ import compression from 'compression'
 import { StatusCodes } from 'http-status-codes'
 import http from 'http'
 import { config } from '@gateway/config'
-import { elastcisearch } from '@gateway/elastic-search'
 import { appRoute } from '@gateway/routes'
+import { elasticsearch } from '@gateway/elastic-search'
+import { axiosAuthInstance } from '@gateway/services/api/auth.service'
 
 const SERVER_PORT = 4000    
 const log:Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'apiGatewayServer', 'debug')
@@ -49,7 +50,16 @@ export class GatewayServer{
             credentials: true,
             methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
         }))
+
+        app.use((req:Request, _res:Response, next:NextFunction)=>{
+            if(req.session?.jwt){
+                axiosAuthInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`
+            }
+            next()
+        })
     }
+
+
 
     private standardMiddleware(app:Application):void{
         app.use(compression())
@@ -62,7 +72,7 @@ export class GatewayServer{
     }
 
     private startElasticSearch():void{
-        elastcisearch.checkConnection()
+        elasticsearch.checkConnection()
     }
 
     private errorHandler(app:Application):void{

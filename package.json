@@ -21,7 +21,7 @@
   "type": "commonjs",
   "dependencies": {
     "@elastic/elasticsearch": "^8.10.0",
-    "@sayargyi007-lab/jobber-shared": "^0.0.19",
+    "@sayargyi007-lab/jobber-shared": "^0.0.22",
     "@socket.io/redis-adapter": "^8.2.1",
     "axios": "^1.6.0",
     "bcrypt": "^5.1.1",
